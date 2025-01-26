@@ -1,0 +1,62 @@
+/* Basic Styles */
+body {
+    background-color: beige;
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1, h2 {
+
+    color: #333;
+}
+
+section {
+    margin-bottom: 20px;
+}
+
+/* Form Styles */
+.add-item-form label {
+    display: block;
+    margin-top: 10px;
+}
+
+.add-item-form input[type="text"],
+.add-item-form input[type="number"],
+.add-item-form input[type="date"],
+.add-item-form input[type="submit"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+.add-item-form input[type="submit"] {
+    width: auto;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.add-item-form input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* Inventory Table Styles */
+.inventory table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.inventory th, .inventory td {
+    border: 1px solid #dabbbb;
+    padding: 8px;
+    text-align: left;
+}
+
+.inventory th {
+    background-color: #b89090;
+}
+
+.inventory tr:nth-child(even) {
+    background-color: #965d5d;
+}
