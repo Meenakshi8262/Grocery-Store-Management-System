@@ -73,7 +73,7 @@ function checkExpiry($expiryDate) {
     }
 }
 
-// Task 5: Adding New Items
+//  Adding New Items
 function addItem($name, $type, $price, $expiry) {
     // Load the current inventory
     $groceryItemsDetails = loadInventory();
