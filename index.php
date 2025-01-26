@@ -1,21 +1,22 @@
 <?php
-// Task 1: Setting Up Grocery Item Arrays
-// Index array to store grocery item names
-$groceryItemNames = ["Apple", "Banana", "Carrot", "Milk", "Bread"];
+// Start the session
+session_start();
 
-// Associative array to store additional details for each item
-// Details include type, price, and expiry date
-$groceryItemsDetails = [
-    "Apple" => ["type" => "Fruit", "price" => 1.20, "expiry" => "2025-01-10"],
-    "Banana" => ["type" => "Fruit", "price" => 0.50, "expiry" => "2025-01-28"],
-    "Carrot" => ["type" => "Vegetable", "price" => 0.30, "expiry" => "2025-01-05"],
-    "Milk" => ["type" => "Dairy", "price" => 1.50, "expiry" => "2025-01-17"],
-    "Bread" => ["type" => "Bakery", "price" => 2.00, "expiry" => "2025-01-30"]
-];
+// Initialize grocery items in the session if not already set
+if (!isset($_SESSION['groceryItemsDetails'])) {
+    $_SESSION['groceryItemsDetails'] = [
+        "Apple" => ["type" => "Fruit", "price" => 1.20, "expiry" => "2025-01-10"],
+        "Banana" => ["type" => "Fruit", "price" => 0.50, "expiry" => "2025-01-28"],
+        "Carrot" => ["type" => "Vegetable", "price" => 0.30, "expiry" => "2025-01-05"],
+        "Milk" => ["type" => "Dairy", "price" => 1.50, "expiry" => "2025-01-17"],
+        "Bread" => ["type" => "Bakery", "price" => 2.00, "expiry" => "2025-01-30"]
+    ];
+}
 
-// Task 2: Displaying the Grocery Inventory
-// Function to display the entire inventory of grocery items
-function displayInventory($groceryItemsDetails) {
+// Display the inventory table
+function displayInventory() {
+    $data = $_SESSION['groceryItemsDetails']; // Load data from session
+
     echo "<table border='1'>
             <tr>
                 <th>Item Name</th>
@@ -25,15 +26,13 @@ function displayInventory($groceryItemsDetails) {
                 <th>Expiry Status</th>
             </tr>";
 
-    // Loop through each item and display its details
-    foreach ($groceryItemsDetails as $name => $details) {
-        // Check expiry status for each item
-        $expiryStatus = checkExpiry($details['expiry']); // Expiry check function
+    foreach ($data as $name => $details) {
+        $expiryStatus = checkExpiry($details['expiry']);
         echo "<tr>
                 <td>$name</td>
-                <td>" . $details['type'] . "</td>
-                <td>" . $details['price'] . "</td>
-                <td>" . $details['expiry'] . "</td>
+                <td>{$details['type']}</td>
+                <td>{$details['price']}</td>
+                <td>{$details['expiry']}</td>
                 <td>$expiryStatus</td>
               </tr>";
     }
@@ -41,41 +40,33 @@ function displayInventory($groceryItemsDetails) {
     echo "</table>";
 }
 
-
-// Task 3: Adding New Items
-// Function to add a new item to the inventory
+// Add a new item to the session inventory
 function addItem($name, $type, $price, $expiry) {
-// Access the global inventory array
-    global $groceryItemsDetails; 
-    $groceryItemsDetails[$name] = [
+    $_SESSION['groceryItemsDetails'][$name] = [
         "type" => $type,
         "price" => $price,
         "expiry" => $expiry
     ];
 }
 
-// Task 4: Expiry Date Check
-// Function to check the expiry status of each item
+// Check if an item is expired
 function checkExpiry($expiryDate) {
-    $currentDate = date("Y-m-d"); // Get the current date
-    // Compare expiry date with the current date to check if expired
-    if (strtotime($expiryDate) < strtotime($currentDate)) {
-        return "Expired"; // If the expiry date is before today
-    } else {
-        return "Valid"; // Otherwise, it is valid
-    }
+    $currentDate = date("Y-m-d");
+    return (strtotime($expiryDate) < strtotime($currentDate)) ? "Expired" : "Valid";
 }
 
-// Handle form submission to add new items to the inventory
+// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
     $type = $_POST['type'];
     $price = $_POST['price'];
     $expiry = $_POST['expiry'];
 
-    // Add the new item to the inventory
+    // Add the new item to the session
     addItem($name, $type, $price, $expiry);
-    header("Location: index.php"); // Redirect to refresh the page and show the updated list
+
+    // Redirect to avoid resubmission
+    header("Location: index.php");
     exit();
 }
 ?>
@@ -85,13 +76,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Grocery Store Management</title>
-    <link rel="stylesheet" href="\Grocery Store Management System with PHP\Styles.css">
-</head> 
+    <title>Grocery Store Management</title>
+    <link rel="stylesheet" href="./Styles.css">
+</head>
+<body>
     <h1>Grocery Store Inventory</h1>
-    
-    <!-- Task 3: Form Section for Adding a New Item -->
-    <!-- This allows the user to input item details (name, type, price, expiry date) -->
+
+    <!-- Add Item Form -->
     <section class="add-item-form">
         <h2>Add New Item</h2>
         <form method="POST" action="index.php">
@@ -111,15 +102,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
     </section>
 
-    <!-- Task 2: Inventory Section -->
-    <!-- This section displays the current grocery inventory -->
+    <!-- Display Inventory -->
     <section class="inventory">
         <h2>Current Inventory</h2>
         <?php
-            // Display the inventory of grocery items
-            displayInventory($groceryItemsDetails);
+        // Display the inventory
+        displayInventory();
         ?>
     </section>
-
 </body>
 </html>
